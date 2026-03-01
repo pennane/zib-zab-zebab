@@ -1,44 +1,42 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>zib-zab-zebab</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>zib-zab-zebab</title>
-</head>
-
-<body>
-  <div class="world">
-    <div class="handheld">
-      <div class="top">
-        <div id="screen"></div>
-      </div>
-      <div class="center">
-        <div class="dpad">
-          <button data-action="up">↑</button>
-          <div>
-            <button data-action="left">←</button>
-            <button data-action="right">→</button>
+  <body>
+    <div class="world">
+      <h1>What is kebab price on Mars?</h1>
+      <div class="handheld">
+        <div class="top">
+          <div id="screen"></div>
+        </div>
+        <div class="center">
+          <div class="dpad">
+            <button data-action="up">↑</button>
+            <div>
+              <button data-action="left">←</button>
+              <button data-action="right">→</button>
+            </div>
+            <button data-action="down">↓</button>
           </div>
-          <button data-action="down">↓</button>
+          <div class="ab">
+            <button data-action="dig">A</button>
+            <button data-action="fill">B</button>
+          </div>
         </div>
-        <div class="ab">
-          <button data-action="dig">A</button>
-          <button data-action="fill">B</button>
-        </div>
-      </div>
-      <div class="bottom">
-
-        <div class="startselect">
-          <button></button>
-          <button></button>
+        <div class="bottom">
+          <div class="startselect">
+            <button></button>
+            <button></button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script type="module" src="/src/main.ts"></script>
-</body>
-
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

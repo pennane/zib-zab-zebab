@@ -3,6 +3,10 @@
   src: url('pixel.ttf');
 }
 
+:root {
+  color-scheme: dark;
+}
+
 html,
 body {
   margin: 0;
@@ -16,6 +20,8 @@ body {
 
 .world {
   display: flex;
+  flex-direction: column;
+  color: white;
   height: 100%;
   align-items: center;
   justify-content: center;
