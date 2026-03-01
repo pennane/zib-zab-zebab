@@ -1,17 +1,23 @@
 import './main.css'
 import { makeInputHandler } from './input'
-import { level1 } from './levels'
+import { levels } from './levels'
 import { makeRenderer } from './renderer'
 import { makeGame } from './game'
 import { makeGameLoop } from './loop'
-import { makeWorldState } from './world'
 import { makeAnimator } from './animator'
-import type { Action } from './model'
+import type { Action, Context } from './model'
 
 const renderer = await makeRenderer(document.getElementById('screen')!)
 const inputHandler = makeInputHandler()
-const state = makeWorldState(level1())
 const animator = makeAnimator()
+
+const context: Context = {
+  scene: { kind: 'menu' },
+  levels,
+  inputHandler,
+  renderer,
+  animator
+}
 
 const KEY_MAP: Record<string, Action> = {
   ArrowUp: 'up',
@@ -45,11 +51,4 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>(
   btn.addEventListener('pointercancel', () => inputHandler.release(action))
 }
 
-makeGameLoop(
-  makeGame({
-    renderer,
-    inputHandler,
-    state,
-    animator
-  })
-).start()
+makeGameLoop(makeGame(context)).start()
