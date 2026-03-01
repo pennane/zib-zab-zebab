@@ -59,7 +59,8 @@ export const makeWorldState = (level: Level): WorldState => {
   return {
     playerId: player.id,
     grid,
-    entities
+    entities,
+    spawns: level.entities
   }
 }
 
@@ -130,4 +131,29 @@ export const moveTo = (
   const toCell = getCell(state.grid, to)
   if (fromCell) fromCell.occupants.delete(entityId)
   if (toCell) toCell.occupants.add(entityId)
+}
+
+export const resetEntities = (state: WorldState): void => {
+  // Clear all occupants from grid
+  for (const col of state.grid) {
+    for (const cell of col) {
+      cell.occupants.clear()
+    }
+  }
+
+  // Remove all entities
+  state.entities.clear()
+
+  // Re-create entities from spawns
+  for (const spawn of state.spawns) {
+    const entity = makeEntity(spawn)
+    state.entities.set(entity.id, entity)
+    const cell = getCell(state.grid, entity.tilePos)
+    if (cell) cell.occupants.add(entity.id)
+  }
+
+  // Update playerId
+  const player = state.entities.values().find((e) => e.kind === 'player')
+  if (!player) throw new Error('No player in spawns')
+  state.playerId = player.id
 }
