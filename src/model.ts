@@ -24,10 +24,13 @@ export type Animator = {
 
 export type Renderer = {
   render(snapshot: RenderSnapshot): void
+  renderText(text: string, x: number, y: number, color?: string): void
+  renderScreen(draw: (ctx: CanvasRenderingContext2D, mars: ImageBitmap) => void): void
 }
 
 export type Context = {
-  state: WorldState
+  scene: Scene
+  levels: Level[]
   inputHandler: InputHandler
   renderer: Renderer
   animator: Animator
@@ -60,7 +63,14 @@ export type WorldState = {
   grid: Cell[][]
   entities: Map<EntityId, Entity>
   playerId: EntityId
+  spawns: EntitySpawn[]
 }
+
+export type Scene =
+  | { kind: 'menu' }
+  | { kind: 'playing'; worldState: WorldState; lives: number; levelIndex: number }
+  | { kind: 'level_clear'; lives: number; levelIndex: number }
+  | { kind: 'game_over' }
 
 export type Cell = {
   surface: CellSurface
