@@ -25,8 +25,8 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
 
   return {
     render(state) {
-      for (const [y, row] of state.grid.entries()) {
-        for (const [x, cell] of row.entries()) {
+      for (const [x, col] of state.grid.entries()) {
+        for (const [y, cell] of col.entries()) {
           ctx.drawImage(mars, x * 16, y * 16)
           switch (cell.surface.kind) {
             case 'obstacle': {

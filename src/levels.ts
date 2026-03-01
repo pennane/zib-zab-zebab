@@ -15,25 +15,25 @@ export const level1 = (): Level => {
   const surfaces: SurfaceSpawn[] = []
   const entities: EntitySpawn[] = []
 
-  for (const [x, row] of blueprint.entries()) {
-    for (const [y, kind] of row.entries()) {
+  for (const [y, row] of blueprint.entries()) {
+    for (const [x, kind] of row.entries()) {
       switch (kind) {
-        case 1: {
+        case 1:
           surfaces.push({ kind: 'obstacle', obstacle: 'tree', pos: { x, y } })
-        }
-        case 2: {
+          break
+        case 2:
           surfaces.push({
             kind: 'shield',
             shield: { kind: 'closed', progress: 0 },
             pos: { x, y }
           })
-        }
-        case 3: {
+          break
+        case 3:
           entities.push({ kind: 'alien', pos: { x, y } })
-        }
-        case 4: {
+          break
+        case 4:
           entities.push({ kind: 'player', pos: { x, y } })
-        }
+          break
       }
     }
   }

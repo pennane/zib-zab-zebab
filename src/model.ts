@@ -4,7 +4,7 @@ export type RawInput = {
   released: Set<Action> // just went up
 }
 
-type Action = 'up' | 'down' | 'left' | 'right' | 'dig' | 'fill'
+export type Action = 'up' | 'down' | 'left' | 'right' | 'dig' | 'fill'
 
 export type Renderer = {
   render(state: WorldState): void
@@ -43,6 +43,7 @@ export type InputHandler = {
 export type WorldState = {
   grid: Cell[][]
   entities: Map<EntityId, Entity>
+  playerId: EntityId
 }
 
 export type World = {

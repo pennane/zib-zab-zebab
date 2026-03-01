@@ -1,3 +1,4 @@
+import './main.css'
 import { makeInputHandler } from './input'
 import { level1 } from './levels'
 import { makeRenderer } from './renderer'
