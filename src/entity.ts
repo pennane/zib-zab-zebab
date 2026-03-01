@@ -42,6 +42,14 @@ const walking: StateHandler & {
 
       events.push({ kind: 'entity_moved', entityId: entity.id, from, to, dir })
 
+      // Collision: alien walked into player's cell
+      if (entity.kind === 'alien') {
+        const player = state.entities.get(state.playerId)
+        if (player && player.tilePos.x === to.x && player.tilePos.y === to.y) {
+          events.push({ kind: 'player_died', entityId: state.playerId, cause: 'caught_by_alien' })
+        }
+      }
+
       const cell = getCell(state.grid, to)
       if (
         cell &&
@@ -205,5 +213,24 @@ export const tick = (state: WorldState): GameEvent[] => {
   for (const entity of state.entities.values()) {
     handlers[entity.state.kind].tick(entity, state, events)
   }
+
+  // Swap collision: player and alien walking through each other
+  const player = state.entities.get(state.playerId)
+  if (player && player.state.kind === 'walking') {
+    const playerTarget = addPos(player.tilePos, dirOffset(player.state.dir))
+    for (const entity of state.entities.values()) {
+      if (entity.kind !== 'alien' || entity.state.kind !== 'walking') continue
+      const alienTarget = addPos(entity.tilePos, dirOffset(entity.state.dir))
+      // Swap: alien's target is player's current pos AND player's target is alien's current pos
+      if (
+        alienTarget.x === player.tilePos.x && alienTarget.y === player.tilePos.y &&
+        playerTarget.x === entity.tilePos.x && playerTarget.y === entity.tilePos.y
+      ) {
+        events.push({ kind: 'player_died', entityId: state.playerId, cause: 'caught_by_alien' })
+        break
+      }
+    }
+  }
+
   return events
 }
