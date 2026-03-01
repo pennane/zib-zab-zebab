@@ -1,8 +1,11 @@
 import type {
   Cell,
+  CellSurface,
   EntityId,
+  EntityKind,
   EntitySpawn,
   Entity,
+  EntityState,
   Level,
   TilePos,
   WorldState
@@ -18,7 +21,7 @@ const makeEntity = (spawn: EntitySpawn): Entity => {
     id: makeId(),
     state: { kind: 'idle' },
     kind: spawn.kind,
-    tilePos: spawn.pos,
+    tilePos: { ...spawn.pos },
     facing: 'right',
     intent: { kind: 'idle' }
   }
@@ -67,58 +70,84 @@ export const makeWorldState = (level: Level): WorldState => {
 export const getCell = (grid: Cell[][], pos: TilePos): Cell | undefined =>
   grid[pos.x]?.[pos.y]
 
-export const passableInto = (cell: Cell, kind: 'player' | 'alien'): boolean => {
-  if (cell.surface.kind === 'obstacle') return false
-  if (cell.surface.kind === 'shield' && cell.surface.shield.kind === 'closed')
-    return false
-  if (kind === 'player' && cell.surface.kind === 'floor') {
-    const dig = cell.surface.dig.kind
-    if (dig === 'open' || dig === 'digging' || dig === 'filling' || dig === 'closing')
-      return false
-  }
-  return true
-}
-
 const SHIELD_SPEED = 0.005
 const HOLE_LINGER_SPEED = 0.002
 const HOLE_CLOSE_SPEED = 0.003
 
-export const tickSurfaces = (state: WorldState): void => {
-  for (const col of state.grid) {
-    for (const cell of col) {
-      if (cell.surface.kind === 'shield') {
-        const shield = cell.surface.shield
-        shield.progress += SHIELD_SPEED
-        if (shield.progress >= 1) {
-          cell.surface.shield =
-            shield.kind === 'closed'
-              ? { kind: 'open', progress: 0 }
-              : { kind: 'closed', progress: 0 }
+type SurfaceBehavior = {
+  passable(surface: CellSurface, entityKind: EntityKind): boolean
+  tick(cell: Cell, state: WorldState): void
+  onEntityArrival(cell: Cell): EntityState
+}
+
+export const surfaceBehaviors: Record<CellSurface['kind'], SurfaceBehavior> = {
+  obstacle: {
+    passable: () => false,
+    tick() {},
+    onEntityArrival: () => ({ kind: 'idle' })
+  },
+  shield: {
+    passable(surface) {
+      return (surface as Extract<CellSurface, { kind: 'shield' }>).shield.kind !== 'closed'
+    },
+    tick(cell) {
+      const surface = cell.surface as Extract<CellSurface, { kind: 'shield' }>
+      const shield = surface.shield
+      shield.progress += SHIELD_SPEED
+      if (shield.progress >= 1) {
+        surface.shield =
+          shield.kind === 'closed'
+            ? { kind: 'open', progress: 0 }
+            : { kind: 'closed', progress: 0 }
+      }
+    },
+    onEntityArrival: () => ({ kind: 'idle' })
+  },
+  floor: {
+    passable(surface, entityKind) {
+      if (entityKind === 'player') {
+        return (surface as Extract<CellSurface, { kind: 'floor' }>).dig.kind === 'intact'
+      }
+      return true
+    },
+    tick(cell, state) {
+      const surface = cell.surface as Extract<CellSurface, { kind: 'floor' }>
+      const dig = surface.dig
+      if (dig.kind === 'open') {
+        dig.progress += HOLE_LINGER_SPEED
+        if (dig.progress >= 1) {
+          surface.dig = { kind: 'closing', progress: 0 }
         }
-      } else if (cell.surface.kind === 'floor') {
-        const dig = cell.surface.dig
-        if (dig.kind === 'open') {
-          dig.progress += HOLE_LINGER_SPEED
-          if (dig.progress >= 1) {
-            cell.surface.dig = { kind: 'closing', progress: 0 }
-          }
-        } else if (dig.kind === 'closing') {
-          dig.progress += HOLE_CLOSE_SPEED
-          if (dig.progress >= 1) {
-            cell.surface.dig = { kind: 'intact' }
-            // Free any trapped aliens — they escape
-            for (const occupantId of cell.occupants) {
-              const occupant = state.entities.get(occupantId)
-              if (occupant && occupant.state.kind === 'trapped') {
-                occupant.state = { kind: 'idle' }
-                occupant.intent = { kind: 'idle' }
-              }
+      } else if (dig.kind === 'closing') {
+        dig.progress += HOLE_CLOSE_SPEED
+        if (dig.progress >= 1) {
+          surface.dig = { kind: 'intact' }
+          for (const occupantId of cell.occupants) {
+            const occupant = state.entities.get(occupantId)
+            if (occupant && occupant.state.kind === 'trapped') {
+              occupant.state = { kind: 'idle' }
+              occupant.intent = { kind: 'idle' }
             }
           }
         }
       }
+    },
+    onEntityArrival(cell) {
+      const surface = cell.surface as Extract<CellSurface, { kind: 'floor' }>
+      if (surface.dig.kind === 'open') return { kind: 'falling', progress: 0 }
+      if (surface.dig.kind === 'digging') { surface.dig = { kind: 'intact' } }
+      return { kind: 'idle' }
     }
   }
+}
+
+export const passableInto = (cell: Cell, kind: EntityKind): boolean =>
+  surfaceBehaviors[cell.surface.kind].passable(cell.surface, kind)
+
+export const tickSurfaces = (state: WorldState): void => {
+  for (const col of state.grid)
+    for (const cell of col)
+      surfaceBehaviors[cell.surface.kind].tick(cell, state)
 }
 
 export const moveTo = (
