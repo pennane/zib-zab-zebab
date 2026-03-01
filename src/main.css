@@ -10,54 +10,70 @@ body {
   background: radial-gradient(#1c281c, #000);
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .world {
   display: flex;
-  align-content: center;
+  height: 100%;
+  align-items: center;
   justify-content: center;
-  padding: 5rem;
+  padding: 5vmin;
+  box-sizing: border-box;
 }
 
 .handheld {
+  height: min(90vmin); /* ← width-only anchor, height follows */
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-  border-radius: 0.75rem 0.75rem 2rem 2rem;
-  background-color: #32ff32;
-  padding: 1rem;
+  border-radius: 1vmin 1vmin 2.5vmin 2.5vmin;
+  background-color: #0f0;
   aspect-ratio: 3 / 5;
+
   border: ridge #0f0;
   border-style: inset;
   box-shadow:
     0 4px 10px -3px rgba(255, 255, 255, 0.1),
     0 2px 4px -2px rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
 }
 
 .top {
+  flex-basis: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #1d1d1d;
-  border-radius: 0.25rem;
-  padding: 1.25rem 2.25rem;
+  border-radius: 0.75vmin;
+  margin: 1.75vmin;
+  padding: 6vmin;
+  padding-top: 2.5vmin;
 }
 
 #screen {
   image-rendering: pixelated;
   display: flex;
-  border-radius: 0.125rem;
+  border-radius: 0.125vmin;
   overflow: hidden;
   border: ridge #4f4f4f;
+  width: 100%; /* fill the .top container */
 }
 
 #screen canvas {
   aspect-ratio: 10 / 9;
+  width: 100%; /* ← this is what makes canvas actually resize */
+  height: auto;
+  display: block;
 }
 
 .center {
   display: flex;
-  gap: 1rem;
+  gap: 1vmin;
   align-items: flex-start;
   justify-content: space-between;
+  flex-basis: 25%;
+  padding: 4vmin 2vmin;
 }
 
 .dpad {
@@ -65,11 +81,11 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
 .dpad button {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 4.5vmin;
+  height: 4.5vmin;
   background: #2e2e2e;
-  border: none;
   border-radius: 3px;
   cursor: pointer;
   border: ridge #5a5a5a;
@@ -78,49 +94,56 @@ body {
   text-align: center;
   line-height: 1;
   font-weight: 700;
+  font-size: 2.5vmin;
 }
 
 .dpad > div {
   display: flex;
-  gap: 1.25rem;
+  gap: 4.25vmin;
   background: #2e2e2e;
   border-radius: 3px;
 }
 
 .ab {
   display: flex;
-  gap: 0.75rem;
+  gap: 1.5vmin;
 }
 
 .ab button {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 6vmin;
+  height: 6vmin;
   background: #2e2e2e;
-  border: none;
   border-radius: 100%;
   cursor: pointer;
   border: ridge #5a5a5a;
   color: black;
   font-weight: 700;
+  font-size: 3vmin;
 }
 
 .ab button:first-of-type {
-  margin-top: 1.25rem;
-  margin-bottom: 0;
+  margin-top: 1.75vmin;
 }
 
 .bottom {
+  padding-top: 2vmin;
   display: flex;
   justify-content: center;
+  flex-basis: 25%;
+}
+
+.startselect {
+  display: flex;
+  gap: 2vmin;
 }
 
 .startselect button {
-  width: 4rem;
-  height: 20px;
+  width: 7vmin;
+  height: 3vmin;
   background: #2e2e2e;
-  border: none;
   border-radius: 3px;
   cursor: pointer;
   border: ridge #5a5a5a;
   color: black;
+  font-size: 1.5vmin;
 }
