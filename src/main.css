@@ -40,14 +40,14 @@ body {
 }
 
 .top {
-  flex-basis: 50%;
+  flex-basis: 40%;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #1d1d1d;
   border-radius: 0.75vmin;
-  margin: 1.75vmin;
-  padding: 6vmin;
+  margin: 2vmin;
+  padding: 7vmin;
   padding-top: 2.5vmin;
 }
 

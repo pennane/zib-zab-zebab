@@ -11,7 +11,7 @@ export type Renderer = {
 }
 
 export type Context = {
-  world: World
+  state: WorldState
   inputHandler: InputHandler
   renderer: Renderer
 }
@@ -37,19 +37,12 @@ export type Game = {
 
 export type InputHandler = {
   poll(): RawInput
-  toIntent(raw: RawInput): Intent
 }
 
 export type WorldState = {
   grid: Cell[][]
   entities: Map<EntityId, Entity>
   playerId: EntityId
-}
-
-export type World = {
-  state: WorldState
-  updateIntents(): void
-  tick(): GameEvent[]
 }
 
 export type Cell = {

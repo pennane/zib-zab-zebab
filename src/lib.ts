@@ -1,4 +1,4 @@
-import type { Cell, Direction, TilePos } from './model'
+import type { Direction, TilePos } from './model'
 
 export const DIRS: Direction[] = ['left', 'right', 'up', 'down']
 
@@ -14,6 +14,3 @@ export const addPos = (a: TilePos, b: TilePos): TilePos => ({
   x: a.x + b.x,
   y: a.y + b.y
 })
-
-export const getCell = (grid: Cell[][], pos: TilePos): Cell | undefined =>
-  grid[pos.x]?.[pos.y]
