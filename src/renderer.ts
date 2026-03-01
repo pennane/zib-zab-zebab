@@ -80,6 +80,15 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
           }
         }
       }
+    },
+
+    renderText(text: string, x: number, y: number, color = '#ffffff') {
+      ctx.fillStyle = color
+      ctx.fillText(text, x, y)
+    },
+
+    renderScreen(draw: (ctx: CanvasRenderingContext2D, mars: ImageBitmap) => void) {
+      draw(ctx, mars)
     }
   }
 }
