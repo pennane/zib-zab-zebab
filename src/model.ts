@@ -23,7 +23,7 @@ export type Animator = {
 }
 
 export type Renderer = {
-  render(snapshot: RenderSnapshot): void
+  render(snapshot: RenderSnapshot, tickCount: number): void
   renderText(text: string, x: number, y: number, color?: string): void
   renderScreen(draw: (ctx: CanvasRenderingContext2D, mars: ImageBitmap) => void): void
 }
@@ -108,7 +108,7 @@ export type Entity = {
 
 export type EntityId = string
 
-export type ObstacleKind = 'tree' | 'none'
+export type ObstacleKind = 'tree' | 'rock' | 'kiosk_left' | 'kiosk_right' | 'box' | 'none'
 
 export type EntityKind = 'player' | 'alien'
 

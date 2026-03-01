@@ -1,4 +1,4 @@
-import type { Cell, CellSurface, EntityKind, EntityVisual, Renderer } from './model'
+import type { Cell, CellSurface, EntityKind, EntityVisual, ObstacleKind, Renderer } from './model'
 
 async function loadImageBitmap(url: string): Promise<ImageBitmap> {
   const res = await fetch(url)
@@ -6,11 +6,34 @@ async function loadImageBitmap(url: string): Promise<ImageBitmap> {
   return await createImageBitmap(blob)
 }
 
+async function loadImageBitmapSafe(url: string): Promise<ImageBitmap | null> {
+  try {
+    return await loadImageBitmap(url)
+  } catch {
+    return null
+  }
+}
+
+async function loadKioskSlices(url: string): Promise<[ImageBitmap, ImageBitmap, ImageBitmap, ImageBitmap]> {
+  const res = await fetch(url)
+  const blob = await res.blob()
+  return await Promise.all([
+    createImageBitmap(blob, 0, 16, 16, 16),
+    createImageBitmap(blob, 16, 16, 16, 16),
+    createImageBitmap(blob, 32, 16, 16, 16),
+    createImageBitmap(blob, 48, 16, 16, 16)
+  ]) as [ImageBitmap, ImageBitmap, ImageBitmap, ImageBitmap]
+}
+
 export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
   await document.fonts.load('8px pixel')
   const zibzabalien = await loadImageBitmap('zibzabalien.png')
   const mars = await loadImageBitmap('mars.png')
   const zeff = await loadImageBitmap('zebabzeff.png')
+  const rokc = await loadImageBitmap('rokc.png')
+  const box = await loadImageBitmap('box.png')
+  const tree = await loadImageBitmapSafe('tree.png')
+  const [kioskF1L, kioskF1R, kioskF2L, kioskF2R] = await loadKioskSlices('zebab-kiosk.png')
 
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
@@ -41,9 +64,9 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
         ctx.globalAlpha = 1
       }
     },
-    obstacle(_cell, x, y) {
-      ctx.fillStyle = 'black'
-      ctx.fillRect(x * 16, y * 16, 16, 16)
+    obstacle(cell, x, y) {
+      const kind = (cell.surface as Extract<CellSurface, { kind: 'obstacle' }>).obstacle
+      obstacleRenderers[kind](x * 16, y * 16)
     },
     shield(cell, x, y) {
       const shield = (cell.surface as Extract<CellSurface, { kind: 'shield' }>).shield
@@ -59,13 +82,28 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
     }
   }
 
+  let kioskFrame = 0
+
+  const obstacleRenderers: Record<ObstacleKind, (x: number, y: number) => void> = {
+    tree(x, y) {
+      if (tree) { ctx.drawImage(tree, x, y) }
+      else { ctx.fillStyle = 'black'; ctx.fillRect(x, y, 16, 16) }
+    },
+    rock(x, y) { ctx.drawImage(rokc, x, y) },
+    kiosk_left(x, y) { ctx.drawImage(kioskFrame === 0 ? kioskF1L : kioskF2L, x, y) },
+    kiosk_right(x, y) { ctx.drawImage(kioskFrame === 0 ? kioskF1R : kioskF2R, x, y) },
+    box(x, y) { ctx.drawImage(box, x, y) },
+    none() {}
+  }
+
   const entityRenderers: Record<EntityKind, (entity: EntityVisual) => void> = {
     alien(entity) { ctx.drawImage(zibzabalien, entity.x, entity.y) },
     player(entity) { ctx.drawImage(zeff, entity.x, entity.y) }
   }
 
   return {
-    render(snapshot) {
+    render(snapshot, tickCount) {
+      kioskFrame = Math.floor(tickCount / 30) % 2
       for (const [x, col] of snapshot.grid.entries()) {
         for (const [y, cell] of col.entries()) {
           ctx.drawImage(mars, x * 16, y * 16)

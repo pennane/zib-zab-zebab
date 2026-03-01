@@ -101,7 +101,7 @@ export const makeGame = (context: Context): Game => {
       render() {
         const scene = context.scene as Extract<Scene, { kind: 'playing' }>
         const snapshot = context.animator.snapshot(scene.worldState)
-        context.renderer.render(snapshot)
+        context.renderer.render(snapshot, tickCount)
         const lives = scene.lives
         context.renderer.renderScreen((ctx) => {
           ctx.fillStyle = '#ffffff'
