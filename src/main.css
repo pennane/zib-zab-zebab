@@ -1,0 +1,126 @@
+@font-face {
+  font-family: pixel;
+  src: url('pixel.ttf');
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(#1c281c, #000);
+}
+
+.world {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  padding: 5rem;
+}
+
+.handheld {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  border-radius: 0.75rem 0.75rem 2rem 2rem;
+  background-color: #32ff32;
+  padding: 1rem;
+  aspect-ratio: 3 / 5;
+  border: ridge #0f0;
+  border-style: inset;
+  box-shadow:
+    0 4px 10px -3px rgba(255, 255, 255, 0.1),
+    0 2px 4px -2px rgba(255, 255, 255, 0.1);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1d1d1d;
+  border-radius: 0.25rem;
+  padding: 1.25rem 2.25rem;
+}
+
+#screen {
+  image-rendering: pixelated;
+  display: flex;
+  border-radius: 0.125rem;
+  overflow: hidden;
+  border: ridge #4f4f4f;
+}
+
+#screen canvas {
+  aspect-ratio: 10 / 9;
+}
+
+.center {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dpad button {
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #2e2e2e;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  border: ridge #5a5a5a;
+  color: black;
+  font-family: monospace;
+  text-align: center;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.dpad > div {
+  display: flex;
+  gap: 1.25rem;
+  background: #2e2e2e;
+  border-radius: 3px;
+}
+
+.ab {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ab button {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #2e2e2e;
+  border: none;
+  border-radius: 100%;
+  cursor: pointer;
+  border: ridge #5a5a5a;
+  color: black;
+  font-weight: 700;
+}
+
+.ab button:first-of-type {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+}
+
+.bottom {
+  display: flex;
+  justify-content: center;
+}
+
+.startselect button {
+  width: 4rem;
+  height: 20px;
+  background: #2e2e2e;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  border: ridge #5a5a5a;
+  color: black;
+}
