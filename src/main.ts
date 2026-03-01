@@ -5,11 +5,13 @@ import { makeRenderer } from './renderer'
 import { makeGame } from './game'
 import { makeGameLoop } from './loop'
 import { makeWorldState } from './world'
+import { makeAnimator } from './animator'
 import type { Action } from './model'
 
 const renderer = await makeRenderer(document.getElementById('screen')!)
 const inputHandler = makeInputHandler()
 const state = makeWorldState(level1())
+const animator = makeAnimator()
 
 const KEY_MAP: Record<string, Action> = {
   ArrowUp: 'up',
@@ -47,6 +49,7 @@ makeGameLoop(
   makeGame({
     renderer,
     inputHandler,
-    state
+    state,
+    animator
   })
 ).start()

@@ -6,14 +6,31 @@ export type RawInput = {
 
 export type Action = 'up' | 'down' | 'left' | 'right' | 'dig' | 'fill'
 
+export type EntityVisual = {
+  kind: EntityKind
+  x: number
+  y: number
+  facing: Direction
+}
+
+export type RenderSnapshot = {
+  grid: Cell[][]
+  entities: EntityVisual[]
+}
+
+export type Animator = {
+  snapshot(state: WorldState): RenderSnapshot
+}
+
 export type Renderer = {
-  render(state: WorldState): void
+  render(snapshot: RenderSnapshot): void
 }
 
 export type Context = {
   state: WorldState
   inputHandler: InputHandler
   renderer: Renderer
+  animator: Animator
 }
 
 export type Level = {
@@ -54,7 +71,7 @@ export type Cell = {
 export type DigState =
   | { kind: 'intact' }
   | { kind: 'digging'; progress: number } // 0..1
-  | { kind: 'open' } // fully dug
+  | { kind: 'open'; progress: number } // 0..1 lingers before closing
   | { kind: 'filling'; progress: number } // 0..1
   | { kind: 'closing'; progress: number } // natural decay back to intact
 
@@ -89,27 +106,29 @@ export type Direction = 'left' | 'right' | 'up' | 'down'
 
 export type EntityState =
   | { kind: 'idle' }
-  | { kind: 'walking'; dir: Direction; progress: number } // 0..1 between tiles
-// | { kind: 'digging'; dir: Direction; progress: number }
-// | { kind: 'filling'; progress: number }
-// | { kind: 'falling'; progress: number }
-// | { kind: 'trapped' }
-// | { kind: 'dead' }
+  | { kind: 'walking'; dir: Direction; progress: number }
+  | { kind: 'digging'; dir: Direction; progress: number }
+  | { kind: 'filling'; progress: number }
+  | { kind: 'falling'; progress: number }
+  | { kind: 'trapped' }
+  | { kind: 'dead' }
 
-export type Intent = { kind: 'idle' } | { kind: 'move'; dir: Direction }
-// | { kind: 'dig'; dir: Direction }
-// | { kind: 'fill' }
+export type Intent =
+  | { kind: 'idle' }
+  | { kind: 'move'; dir: Direction }
+  | { kind: 'dig' }
+  | { kind: 'fill' }
 
-export type GameEvent = {
-  kind: 'entity_moved'
-  entityId: EntityId
-  from: TilePos
-  to: TilePos
-  dir: Direction
-}
-// | { kind: 'player_died'; entityId: EntityId; cause: DeathCause }
-// | { kind: 'player_respawned'; entityId: EntityId; at: TilePos }
+export type GameEvent =
+  | {
+      kind: 'entity_moved'
+      entityId: EntityId
+      from: TilePos
+      to: TilePos
+      dir: Direction
+    }
+  | { kind: 'player_died'; entityId: EntityId; cause: DeathCause }
 
-// export type DeathCause = 'caught_by_alien' | 'buried_alive'
+export type DeathCause = 'caught_by_alien' | 'buried_alive'
 
 export type TilePos = { x: number; y: number }

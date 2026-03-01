@@ -1,6 +1,7 @@
 import type { Context, Direction, Game, Intent, RawInput } from './model'
 import { updateAlienIntents } from './ai'
 import { tick } from './entity'
+import { tickSurfaces } from './world'
 
 const DIR_ACTIONS = ['up', 'down', 'left', 'right'] as const
 
@@ -10,6 +11,8 @@ const rawInputToIntent = (raw: RawInput): Intent => {
       return { kind: 'move', dir: action as Direction }
     }
   }
+  if (raw.held.has('dig')) return { kind: 'dig' }
+  if (raw.held.has('fill')) return { kind: 'fill' }
   return { kind: 'idle' }
 }
 
@@ -20,11 +23,13 @@ export const makeGame = (context: Context): Game => {
       const player = context.state.entities.get(context.state.playerId)
       if (player) player.intent = rawInputToIntent(input)
 
+      tickSurfaces(context.state)
       updateAlienIntents(context.state)
       tick(context.state)
     },
     render(_alpha: number) {
-      context.renderer.render(context.state)
+      const snapshot = context.animator.snapshot(context.state)
+      context.renderer.render(snapshot)
     }
   }
 }
