@@ -32,6 +32,8 @@ body {
 }
 
 .handheld {
+  touch-action: none;
+  user-select: none;
   position: relative;
   height: min(90vmin); /* ← width-only anchor, height follows */
   display: flex;
@@ -137,8 +139,6 @@ body {
   line-height: 1;
   font-weight: 700;
   font-size: 2.5vmin;
-  touch-action: none;
-  user-select: none;
   transition:
     transform 0.06s,
     background 0.06s,
@@ -176,8 +176,6 @@ body {
   color: #999;
   font-weight: 700;
   font-size: 3vmin;
-  touch-action: none;
-  user-select: none;
   transition:
     transform 0.06s,
     background 0.06s,
