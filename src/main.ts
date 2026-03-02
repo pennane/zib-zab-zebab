@@ -36,8 +36,8 @@ const KEY_MAP: Record<string, Action> = {
   KeyS: 'down',
   KeyA: 'left',
   KeyD: 'right',
-  KeyZ: 'dig',
-  KeyX: 'fill'
+  KeyZ: 'platter',
+  KeyX: 'nap'
 }
 
 window.addEventListener('keydown', (e) => {

@@ -11,8 +11,8 @@ const rawInputToIntent = (raw: RawInput): Intent => {
       return { kind: 'move', dir: action as Direction }
     }
   }
-  if (raw.held.has('dig')) return { kind: 'dig' }
-  if (raw.held.has('fill')) return { kind: 'fill' }
+  if (raw.held.has('platter')) return { kind: 'platter' }
+  if (raw.held.has('nap')) return { kind: 'nap' }
   return { kind: 'idle' }
 }
 

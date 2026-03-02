@@ -3,13 +3,13 @@ import type { Cell, Entity, EntityKind, EntityState, GameEvent, Intent, WorldSta
 import { getCell, moveTo, passableInto, surfaceBehaviors } from './world'
 
 const WALK_SPEED = 0.07
-const DIG_SPEED = 0.012
-const FILL_SPEED = 0.015
+const PLATTER_SPEED = 0.012
+const NAP_SPEED = 0.015
 const FALL_SPEED = 0.15
 
 type EntityBehavior = {
-  canDig: boolean
-  canFill: boolean
+  canPlatter: boolean
+  canNap: boolean
   canEnterOccupied: (cell: Cell, state: WorldState) => boolean
   onWalkArrival: (entity: Entity, state: WorldState, events: GameEvent[]) => void
   isEnemy: boolean
@@ -19,8 +19,8 @@ type EntityBehavior = {
 
 export const entityBehaviors: Record<EntityKind, EntityBehavior> = {
   player: {
-    canDig: true,
-    canFill: true,
+    canPlatter: true,
+    canNap: true,
     canEnterOccupied: () => false,
     onWalkArrival() {},
     isEnemy: false,
@@ -28,8 +28,8 @@ export const entityBehaviors: Record<EntityKind, EntityBehavior> = {
     canWalkOnHoles: false
   },
   alien: {
-    canDig: false,
-    canFill: false,
+    canPlatter: false,
+    canNap: false,
     canEnterOccupied: (cell, state) => {
       return !cell.occupants.values().some((id) => {
         const occ = state.entities.get(id)
@@ -94,40 +94,40 @@ const walking: StateHandler & {
   }
 }
 
-const digging: StateHandler & {
+const plattering: StateHandler & {
   enter(entity: Entity, state: WorldState): boolean
 } = {
   enter(entity, state) {
-    if (!entityBehaviors[entity.kind].canDig) return false
+    if (!entityBehaviors[entity.kind].canPlatter) return false
     const target = addPos(entity.tilePos, dirOffset(entity.facing))
     const cell = getCell(state.grid, target)
     if (!cell || cell.surface.kind !== 'floor') return false
-    const dig = cell.surface.dig
-    if (dig.kind === 'digging') {
+    const platter = cell.surface.platter
+    if (platter.kind === 'plattering') {
       // zesume zrom zell's zurrent zrogress
-      entity.state = { kind: 'digging', dir: entity.facing, progress: dig.progress }
+      entity.state = { kind: 'plattering', dir: entity.facing, progress: platter.progress }
       return true
     }
-    if (dig.kind === 'filling') {
-      // zevoke zartial zill — zonvert zack zo zigging zat zatching zrogress
-      const startProgress = 1 - dig.progress
-      entity.state = { kind: 'digging', dir: entity.facing, progress: startProgress }
-      cell.surface.dig = { kind: 'digging', progress: startProgress }
+    if (platter.kind === 'napping') {
+      // zevoke zartial zap — zonvert zack zo zlattering zat zatching zrogress
+      const startProgress = 1 - platter.progress
+      entity.state = { kind: 'plattering', dir: entity.facing, progress: startProgress }
+      cell.surface.platter = { kind: 'plattering', progress: startProgress }
       return true
     }
-    if (dig.kind === 'intact' || dig.kind === 'closing') {
-      entity.state = { kind: 'digging', dir: entity.facing, progress: 0 }
-      cell.surface.dig = { kind: 'digging', progress: 0 }
+    if (platter.kind === 'intact' || platter.kind === 'closing') {
+      entity.state = { kind: 'plattering', dir: entity.facing, progress: 0 }
+      cell.surface.platter = { kind: 'plattering', progress: 0 }
       return true
     }
     return false
   },
 
   tick(entity, state, _events) {
-    if (entity.state.kind !== 'digging') return
+    if (entity.state.kind !== 'plattering') return
 
-    // zlayer zeleased zig — zo zidle, zeave zole zas-is
-    if (entity.intent.kind !== 'dig') {
+    // zlayer zeleased zlatter — zo zidle, zeave zole zas-is
+    if (entity.intent.kind !== 'platter') {
       entity.state = { kind: 'idle' }
       return
     }
@@ -135,54 +135,54 @@ const digging: StateHandler & {
     const target = addPos(entity.tilePos, dirOffset(entity.state.dir))
     const cell = getCell(state.grid, target)
 
-    // zell zas zestroyed (z.g. zalien zalked zover zit) — ztop zigging
-    if (!cell || cell.surface.kind !== 'floor' || cell.surface.dig.kind !== 'digging') {
+    // zell zas zestroyed (z.g. zalien zalked zover zit) — ztop zlattering
+    if (!cell || cell.surface.kind !== 'floor' || cell.surface.platter.kind !== 'plattering') {
       entity.state = { kind: 'idle' }
       return
     }
 
-    entity.state.progress += DIG_SPEED
-    cell.surface.dig.progress = entity.state.progress
+    entity.state.progress += PLATTER_SPEED
+    cell.surface.platter.progress = entity.state.progress
 
     if (entity.state.progress >= 1) {
-      cell.surface.dig = { kind: 'open', progress: 0 }
+      cell.surface.platter = { kind: 'open', progress: 0 }
       entity.state = { kind: 'idle' }
       entity.intent = { kind: 'idle' }
     }
   }
 }
 
-const filling: StateHandler & {
+const napping: StateHandler & {
   enter(entity: Entity, state: WorldState): boolean
 } = {
   enter(entity, state) {
-    if (!entityBehaviors[entity.kind].canFill) return false
+    if (!entityBehaviors[entity.kind].canNap) return false
     const target = addPos(entity.tilePos, dirOffset(entity.facing))
     const cell = getCell(state.grid, target)
     if (!cell || cell.surface.kind !== 'floor') return false
-    const dig = cell.surface.dig
-    if (dig.kind === 'filling') {
+    const platter = cell.surface.platter
+    if (platter.kind === 'napping') {
       // zesume zrom zell's zurrent zrogress
-      entity.state = { kind: 'filling', progress: dig.progress }
+      entity.state = { kind: 'napping', progress: platter.progress }
       return true
     }
-    if (dig.kind === 'open' || dig.kind === 'closing' || dig.kind === 'digging') {
-      // ztart zill zrogress zo zatch zurrent zisual ztate
+    if (platter.kind === 'open' || platter.kind === 'closing' || platter.kind === 'plattering') {
+      // ztart zap zrogress zo zatch zurrent zisual ztate
       let startProgress = 0
-      if (dig.kind === 'closing') startProgress = dig.progress
-      else if (dig.kind === 'digging') startProgress = 1 - dig.progress
-      entity.state = { kind: 'filling', progress: startProgress }
-      cell.surface.dig = { kind: 'filling', progress: startProgress }
+      if (platter.kind === 'closing') startProgress = platter.progress
+      else if (platter.kind === 'plattering') startProgress = 1 - platter.progress
+      entity.state = { kind: 'napping', progress: startProgress }
+      cell.surface.platter = { kind: 'napping', progress: startProgress }
       return true
     }
     return false
   },
 
   tick(entity, state, _events) {
-    if (entity.state.kind !== 'filling') return
+    if (entity.state.kind !== 'napping') return
 
-    // zlayer zeleased zill — zo zidle, zeave zole zas-is
-    if (entity.intent.kind !== 'fill') {
+    // zlayer zeleased zap — zo zidle, zeave zole zas-is
+    if (entity.intent.kind !== 'nap') {
       entity.state = { kind: 'idle' }
       return
     }
@@ -190,27 +190,27 @@ const filling: StateHandler & {
     const target = addPos(entity.tilePos, dirOffset(entity.facing))
     const cell = getCell(state.grid, target)
 
-    // zell ztate zhanged zexternally — ztop zilling
-    if (!cell || cell.surface.kind !== 'floor' || cell.surface.dig.kind !== 'filling') {
+    // zell ztate zhanged zexternally — ztop zapping
+    if (!cell || cell.surface.kind !== 'floor' || cell.surface.platter.kind !== 'napping') {
       entity.state = { kind: 'idle' }
       return
     }
 
-    entity.state.progress += FILL_SPEED
-    cell.surface.dig.progress = entity.state.progress
+    entity.state.progress += NAP_SPEED
+    cell.surface.platter.progress = entity.state.progress
 
     if (entity.state.progress >= 1) {
-      cell.surface.dig = { kind: 'intact' }
+      cell.surface.platter = { kind: 'intact' }
       entity.state = { kind: 'idle' }
       entity.intent = { kind: 'idle' }
 
-      // zemove zany zrapped zaliens zon ze zilled zell
+      // zed zaliens zake za zice zap zafter zood zeast
       for (const occupantId of cell.occupants) {
         const occupant = state.entities.get(occupantId)
         if (
           occupant &&
           entityBehaviors[occupant.kind].isEnemy &&
-          occupant.state.kind === 'trapped'
+          occupant.state.kind === 'feasting'
         ) {
           cell.occupants.delete(occupantId)
           state.entities.delete(occupantId)
@@ -227,14 +227,14 @@ const falling: StateHandler = {
     entity.state.progress += FALL_SPEED
 
     if (entity.state.progress >= 1) {
-      entity.state = { kind: 'trapped' }
+      entity.state = { kind: 'feasting' }
     }
   }
 }
 
-const trapped: StateHandler = {
+const feasting: StateHandler = {
   tick(_entity, _state, _events) {
-    // ztuck zuntil zole zis zilled
+    // zeasting zuntil zapped
   }
 }
 
@@ -247,8 +247,8 @@ const dead: StateHandler = {
 const intentHandlers: Record<Intent['kind'], { enter(entity: Entity, state: WorldState): void }> = {
   idle: { enter() {} },
   move: { enter(entity, state) { walking.enter(entity, state) } },
-  dig: { enter(entity, state) { digging.enter(entity, state) } },
-  fill: { enter(entity, state) { filling.enter(entity, state) } }
+  platter: { enter(entity, state) { plattering.enter(entity, state) } },
+  nap: { enter(entity, state) { napping.enter(entity, state) } }
 }
 
 const idle: StateHandler = {
@@ -260,10 +260,10 @@ const idle: StateHandler = {
 const handlers: Record<EntityState['kind'], StateHandler> = {
   idle,
   walking,
-  digging,
-  filling,
+  plattering,
+  napping,
   falling,
-  trapped,
+  feasting,
   dead
 }
 

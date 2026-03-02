@@ -32,7 +32,7 @@ export const makeWorldState = (level: Level): WorldState => {
     Array.from({ length: level.height }).map((_, y): Cell => {
       return {
         pos: { x, y },
-        surface: { kind: 'floor', dig: { kind: 'intact' } },
+        surface: { kind: 'floor', platter: { kind: 'intact' } },
         occupants: new Set()
       }
     })
@@ -106,25 +106,25 @@ export const surfaceBehaviors: Record<CellSurface['kind'], SurfaceBehavior> = {
   floor: {
     passable(surface, entityKind) {
       if (entityKind === 'player') {
-        return (surface as Extract<CellSurface, { kind: 'floor' }>).dig.kind === 'intact'
+        return (surface as Extract<CellSurface, { kind: 'floor' }>).platter.kind === 'intact'
       }
       return true
     },
     tick(cell, state) {
       const surface = cell.surface as Extract<CellSurface, { kind: 'floor' }>
-      const dig = surface.dig
-      if (dig.kind === 'open') {
-        dig.progress += HOLE_LINGER_SPEED
-        if (dig.progress >= 1) {
-          surface.dig = { kind: 'closing', progress: 0 }
+      const platter = surface.platter
+      if (platter.kind === 'open') {
+        platter.progress += HOLE_LINGER_SPEED
+        if (platter.progress >= 1) {
+          surface.platter = { kind: 'closing', progress: 0 }
         }
-      } else if (dig.kind === 'closing') {
-        dig.progress += HOLE_CLOSE_SPEED
-        if (dig.progress >= 1) {
-          surface.dig = { kind: 'intact' }
+      } else if (platter.kind === 'closing') {
+        platter.progress += HOLE_CLOSE_SPEED
+        if (platter.progress >= 1) {
+          surface.platter = { kind: 'intact' }
           for (const occupantId of cell.occupants) {
             const occupant = state.entities.get(occupantId)
-            if (occupant && occupant.state.kind === 'trapped') {
+            if (occupant && occupant.state.kind === 'feasting') {
               occupant.state = { kind: 'idle' }
               occupant.intent = { kind: 'idle' }
             }
@@ -134,8 +134,8 @@ export const surfaceBehaviors: Record<CellSurface['kind'], SurfaceBehavior> = {
     },
     onEntityArrival(cell) {
       const surface = cell.surface as Extract<CellSurface, { kind: 'floor' }>
-      if (surface.dig.kind === 'open') return { kind: 'falling', progress: 0 }
-      if (surface.dig.kind === 'digging') { surface.dig = { kind: 'intact' } }
+      if (surface.platter.kind === 'open') return { kind: 'falling', progress: 0 }
+      if (surface.platter.kind === 'plattering') { surface.platter = { kind: 'intact' } }
       return { kind: 'idle' }
     }
   }

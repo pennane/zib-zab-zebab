@@ -61,17 +61,17 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
     (cell: Cell, x: number, y: number) => void
   > = {
     floor(cell, x, y) {
-      const dig = (cell.surface as Extract<CellSurface, { kind: 'floor' }>).dig
-      if (dig.kind === 'open') {
+      const platter = (cell.surface as Extract<CellSurface, { kind: 'floor' }>).platter
+      if (platter.kind === 'open') {
         ctx.fillStyle = '#331100'
         ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12)
-      } else if (dig.kind === 'digging') {
-        ctx.globalAlpha = dig.progress
+      } else if (platter.kind === 'plattering') {
+        ctx.globalAlpha = platter.progress
         ctx.fillStyle = '#331100'
         ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12)
         ctx.globalAlpha = 1
-      } else if (dig.kind === 'filling' || dig.kind === 'closing') {
-        ctx.globalAlpha = 1 - dig.progress
+      } else if (platter.kind === 'napping' || platter.kind === 'closing') {
+        ctx.globalAlpha = 1 - platter.progress
         ctx.fillStyle = '#331100'
         ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12)
         ctx.globalAlpha = 1
