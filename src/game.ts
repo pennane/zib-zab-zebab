@@ -1,7 +1,7 @@
-import type { Context, Direction, Game, Intent, RawInput, Scene } from './model'
 import { updateAlienIntents } from './ai'
 import { entityBehaviors, tick } from './entity'
-import { tickSurfaces, makeWorldState, resetEntities } from './world'
+import type { Context, Direction, Game, Intent, RawInput, Scene } from './model'
+import { makeWorldState, resetEntities, tickSurfaces } from './world'
 
 const DIR_ACTIONS = ['up', 'down', 'left', 'right'] as const
 
@@ -28,9 +28,12 @@ export const makeGame = (context: Context): Game => {
 
   const menuMusic = new Audio('zabzabzabzib.mp3')
   menuMusic.loop = true
+  menuMusic.volume = 0.15
   const gameMusic = new Audio('disco.mp3')
   gameMusic.loop = true
+  gameMusic.volume = 0.15
   const bootSound = new Audio('zab.wav')
+  bootSound.volume = 0.5
 
   const musicForScene: Record<Scene['kind'], HTMLAudioElement | null> = {
     off: null,
