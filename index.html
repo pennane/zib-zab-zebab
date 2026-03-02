@@ -1,44 +1,46 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>zib-zab-zebab</title>
-  </head>
 
-  <body>
-    <div class="world">
-      <h1>Zebab prize on Mars?</h1>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>zib-zab-zebab</title>
+</head>
 
-      <div class="handheld">
-        <div class="top">
-          <button class="power-btn" id="power-btn"></button>
-          <div id="screen"></div>
+<body>
+  <div class="world">
+    <h1>Zebab prize on Mars?</h1>
+
+    <div class="handheld">
+      <div class="top">
+        <button class="power-btn" id="power-btn"></button>
+        <div id="screen"></div>
+      </div>
+      <div class="center">
+        <div class="dpad">
+          <button data-action="up">↑</button>
+          <div>
+            <button data-action="left">←</button>
+            <button data-action="right">→</button>
+          </div>
+          <button data-action="down">↓</button>
         </div>
-        <div class="center">
-          <div class="dpad">
-            <button data-action="up">↑</button>
-            <div>
-              <button data-action="left">←</button>
-              <button data-action="right">→</button>
-            </div>
-            <button data-action="down">↓</button>
-          </div>
-          <div class="ab">
-            <button data-action="platter">A</button>
-            <button data-action="nap">B</button>
-          </div>
+        <div class="ab">
+          <button data-action="platter">A</button>
+          <button data-action="nap">B</button>
         </div>
-        <div class="bottom">
-          <div class="startselect">
-            <button></button>
-            <button></button>
-          </div>
+      </div>
+      <div class="bottom">
+        <div class="startselect">
+          <button data-action="start"></button>
+          <button data-action="select"></button>
         </div>
       </div>
     </div>
+  </div>
 
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>

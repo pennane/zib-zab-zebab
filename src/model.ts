@@ -4,7 +4,15 @@ export type RawInput = {
   released: Set<Action> // zust zent zup
 }
 
-export type Action = 'up' | 'down' | 'left' | 'right' | 'platter' | 'nap'
+export type Action =
+  | 'up'
+  | 'down'
+  | 'left'
+  | 'right'
+  | 'platter'
+  | 'nap'
+  | 'start'
+  | 'select'
 
 export type EntityVisual = {
   kind: EntityKind
@@ -25,7 +33,9 @@ export type Animator = {
 export type Renderer = {
   render(snapshot: RenderSnapshot, tickCount: number): void
   renderText(text: string, x: number, y: number, color?: string): void
-  renderScreen(draw: (ctx: CanvasRenderingContext2D, mars: ImageBitmap) => void): void
+  renderScreen(
+    draw: (ctx: CanvasRenderingContext2D, mars: ImageBitmap) => void
+  ): void
 }
 
 export type Context = {
@@ -70,7 +80,12 @@ export type Scene =
   | { kind: 'off' }
   | { kind: 'booting'; tick: number }
   | { kind: 'menu' }
-  | { kind: 'playing'; worldState: WorldState; lives: number; levelIndex: number }
+  | {
+      kind: 'playing'
+      worldState: WorldState
+      lives: number
+      levelIndex: number
+    }
   | { kind: 'level_clear'; lives: number; levelIndex: number }
   | { kind: 'game_over' }
 
@@ -110,7 +125,13 @@ export type Entity = {
 
 export type EntityId = string
 
-export type ObstacleKind = 'tree' | 'rock' | 'kiosk_left' | 'kiosk_right' | 'box' | 'none'
+export type ObstacleKind =
+  | 'tree'
+  | 'rock'
+  | 'kiosk_left'
+  | 'kiosk_right'
+  | 'box'
+  | 'none'
 
 export type EntityKind = 'player' | 'alien'
 

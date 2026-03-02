@@ -12,6 +12,7 @@ html,
 body {
   margin: 0;
   height: 100%;
+
   background: radial-gradient(#1c281c, #000);
 }
 
@@ -78,6 +79,10 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
+.power-btn:focus {
+  visibility: hidden;
+}
+
 .power-btn.pressed {
   background: #881111;
   border-style: inset;
@@ -92,12 +97,12 @@ body {
   border-radius: 0.125vmin;
   overflow: hidden;
   border: ridge #4f4f4f;
-  width: 100%; /* fill the .top container */
+  width: 100%;
+  aspect-ratio: 10/9;
 }
 
 #screen canvas {
-  aspect-ratio: 10 / 9;
-  width: 100%; /* ← this is what makes canvas actually resize */
+  width: 100%;
   height: auto;
   display: block;
 }
