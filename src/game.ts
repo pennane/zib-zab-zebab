@@ -26,7 +26,75 @@ type SceneHandler = {
 export const makeGame = (context: Context): Game => {
   let tickCount = 0
 
+  const menuMusic = new Audio('zabzabzabzib.mp3')
+  menuMusic.loop = true
+  const gameMusic = new Audio('disco.mp3')
+  gameMusic.loop = true
+  const bootSound = new Audio('zab.wav')
+
+  const musicForScene: Record<Scene['kind'], HTMLAudioElement | null> = {
+    off: null,
+    booting: null,
+    menu: menuMusic,
+    game_over: menuMusic,
+    playing: gameMusic,
+    level_clear: menuMusic
+  }
+
+  let currentMusic: HTMLAudioElement | null = null
+
+  const updateMusic = (sceneKind: Scene['kind']) => {
+    const target = musicForScene[sceneKind]
+    if (target === currentMusic) return
+    if (currentMusic) {
+      currentMusic.pause()
+      currentMusic.currentTime = 0
+    }
+    currentMusic = target
+    if (target) target.play().catch(() => {})
+  }
+
   const sceneHandlers: Record<Scene['kind'], SceneHandler> = {
+    off: {
+      update() {},
+      render() {
+        context.renderer.renderScreen((ctx) => {
+          ctx.fillStyle = '#000000'
+          ctx.fillRect(0, 0, 160, 144)
+        })
+      }
+    },
+
+    booting: {
+      update() {
+        const scene = context.scene as Extract<Scene, { kind: 'booting' }>
+        scene.tick++
+        if (scene.tick === 1) {
+          bootSound.currentTime = 0
+          bootSound.play().catch(() => {})
+        }
+        if (scene.tick >= 180) {
+          context.scene = { kind: 'menu' }
+        }
+      },
+      render() {
+        const scene = context.scene as Extract<Scene, { kind: 'booting' }>
+        context.renderer.renderScreen((ctx) => {
+          ctx.fillStyle = '#000000'
+          ctx.fillRect(0, 0, 160, 144)
+
+          if (scene.tick >= 30) {
+            ctx.fillStyle = '#88cc88'
+            ctx.fillText('Zib-zab', 48, 64)
+          }
+          if (scene.tick >= 45) {
+            ctx.fillStyle = '#88cc88'
+            ctx.fillText('electronics', 36, 78)
+          }
+        })
+      }
+    },
+
     menu: {
       update(input) {
         if (input.pressed.size > 0) {
@@ -50,7 +118,7 @@ export const makeGame = (context: Context): Game => {
           ctx.fillRect(0, 0, 160, 144)
           ctx.fillStyle = '#ff6600'
           ctx.fillText('ZIB ZAB', 44, 40)
-          ctx.fillText('KEBAB', 52, 52)
+          ctx.fillText('KEBAB ZEFF', 52, 52)
           if (Math.floor(tickCount / 30) % 2 === 0) {
             ctx.fillStyle = '#ffffff'
             ctx.fillText('PRESS START', 36, 90)
@@ -189,6 +257,7 @@ export const makeGame = (context: Context): Game => {
       const input = context.inputHandler.poll()
       tickCount++
       sceneHandlers[context.scene.kind].update(input)
+      updateMusic(context.scene.kind)
     },
     render(_alpha: number) {
       sceneHandlers[context.scene.kind].render()

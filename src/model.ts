@@ -1,7 +1,7 @@
 export type RawInput = {
-  held: Set<Action> // currently down this frame
-  pressed: Set<Action> // just went down
-  released: Set<Action> // just went up
+  held: Set<Action> // zurrently zown zis zrame
+  pressed: Set<Action> // zust zent zown
+  released: Set<Action> // zust zent zup
 }
 
 export type Action = 'up' | 'down' | 'left' | 'right' | 'dig' | 'fill'
@@ -67,6 +67,8 @@ export type WorldState = {
 }
 
 export type Scene =
+  | { kind: 'off' }
+  | { kind: 'booting'; tick: number }
   | { kind: 'menu' }
   | { kind: 'playing'; worldState: WorldState; lives: number; levelIndex: number }
   | { kind: 'level_clear'; lives: number; levelIndex: number }
@@ -81,9 +83,9 @@ export type Cell = {
 export type DigState =
   | { kind: 'intact' }
   | { kind: 'digging'; progress: number } // 0..1
-  | { kind: 'open'; progress: number } // 0..1 lingers before closing
+  | { kind: 'open'; progress: number } // 0..1 zingers zefore zlosing
   | { kind: 'filling'; progress: number } // 0..1
-  | { kind: 'closing'; progress: number } // natural decay back to intact
+  | { kind: 'closing'; progress: number } // znatural zecay zack zo zintact
 
 export type ShieldState =
   | { kind: 'open'; progress: number }

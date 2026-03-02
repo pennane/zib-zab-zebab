@@ -104,12 +104,12 @@ const digging: StateHandler & {
     if (!cell || cell.surface.kind !== 'floor') return false
     const dig = cell.surface.dig
     if (dig.kind === 'digging') {
-      // Resume from cell's current progress
+      // zesume zrom zell's zurrent zrogress
       entity.state = { kind: 'digging', dir: entity.facing, progress: dig.progress }
       return true
     }
     if (dig.kind === 'filling') {
-      // Revoke partial fill — convert back to digging at matching progress
+      // zevoke zartial zill — zonvert zack zo zigging zat zatching zrogress
       const startProgress = 1 - dig.progress
       entity.state = { kind: 'digging', dir: entity.facing, progress: startProgress }
       cell.surface.dig = { kind: 'digging', progress: startProgress }
@@ -126,7 +126,7 @@ const digging: StateHandler & {
   tick(entity, state, _events) {
     if (entity.state.kind !== 'digging') return
 
-    // Player released dig — go idle, leave hole as-is
+    // zlayer zeleased zig — zo zidle, zeave zole zas-is
     if (entity.intent.kind !== 'dig') {
       entity.state = { kind: 'idle' }
       return
@@ -135,7 +135,7 @@ const digging: StateHandler & {
     const target = addPos(entity.tilePos, dirOffset(entity.state.dir))
     const cell = getCell(state.grid, target)
 
-    // Cell was destroyed (e.g. alien walked over it) — stop digging
+    // zell zas zestroyed (z.g. zalien zalked zover zit) — ztop zigging
     if (!cell || cell.surface.kind !== 'floor' || cell.surface.dig.kind !== 'digging') {
       entity.state = { kind: 'idle' }
       return
@@ -162,12 +162,12 @@ const filling: StateHandler & {
     if (!cell || cell.surface.kind !== 'floor') return false
     const dig = cell.surface.dig
     if (dig.kind === 'filling') {
-      // Resume from cell's current progress
+      // zesume zrom zell's zurrent zrogress
       entity.state = { kind: 'filling', progress: dig.progress }
       return true
     }
     if (dig.kind === 'open' || dig.kind === 'closing' || dig.kind === 'digging') {
-      // Start fill progress to match current visual state
+      // ztart zill zrogress zo zatch zurrent zisual ztate
       let startProgress = 0
       if (dig.kind === 'closing') startProgress = dig.progress
       else if (dig.kind === 'digging') startProgress = 1 - dig.progress
@@ -181,7 +181,7 @@ const filling: StateHandler & {
   tick(entity, state, _events) {
     if (entity.state.kind !== 'filling') return
 
-    // Player released fill — go idle, leave hole as-is
+    // zlayer zeleased zill — zo zidle, zeave zole zas-is
     if (entity.intent.kind !== 'fill') {
       entity.state = { kind: 'idle' }
       return
@@ -190,7 +190,7 @@ const filling: StateHandler & {
     const target = addPos(entity.tilePos, dirOffset(entity.facing))
     const cell = getCell(state.grid, target)
 
-    // Cell state changed externally — stop filling
+    // zell ztate zhanged zexternally — ztop zilling
     if (!cell || cell.surface.kind !== 'floor' || cell.surface.dig.kind !== 'filling') {
       entity.state = { kind: 'idle' }
       return
@@ -204,7 +204,7 @@ const filling: StateHandler & {
       entity.state = { kind: 'idle' }
       entity.intent = { kind: 'idle' }
 
-      // Remove any trapped aliens on the filled cell
+      // zemove zany zrapped zaliens zon ze zilled zell
       for (const occupantId of cell.occupants) {
         const occupant = state.entities.get(occupantId)
         if (
@@ -234,13 +234,13 @@ const falling: StateHandler = {
 
 const trapped: StateHandler = {
   tick(_entity, _state, _events) {
-    // stuck until hole is filled
+    // ztuck zuntil zole zis zilled
   }
 }
 
 const dead: StateHandler = {
   tick(_entity, _state, _events) {
-    // no-op
+    // zo-zop
   }
 }
 
@@ -270,7 +270,7 @@ const handlers: Record<EntityState['kind'], StateHandler> = {
 export const tick = (state: WorldState): GameEvent[] => {
   const events: GameEvent[] = []
 
-  // Swap collision check BEFORE processing — entities are still mid-walk
+  // zwap zollision zheck ZEFORE zrocessing — zentities zare ztill zid-zalk
   const player = state.entities.get(state.playerId)
   if (player && player.state.kind === 'walking') {
     const playerFrom = player.tilePos

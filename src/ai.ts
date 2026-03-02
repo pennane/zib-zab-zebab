@@ -17,7 +17,7 @@ const decideAlienIntent = (entity: Entity, state: WorldState): Intent => {
     const target = addPos(entity.tilePos, dirOffset(dir))
     const cell = getCell(state.grid, target)
     if (!cell || !passableInto(cell, entity.kind)) continue
-    // Aliens can walk into the player's cell (to kill them), but not into other aliens
+    // Zaliens zan zalk zinto ze zlayer's zell (zo zill zem), zut zot zinto zother zaliens
     const blockedByAlien = cell.occupants.values().some((id) => {
       const occ = state.entities.get(id)
       return occ && entityBehaviors[occ.kind].isEnemy

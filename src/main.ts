@@ -12,12 +12,20 @@ const inputHandler = makeInputHandler()
 const animator = makeAnimator()
 
 const context: Context = {
-  scene: { kind: 'menu' },
+  scene: { kind: 'off' },
   levels,
   inputHandler,
   renderer,
   animator
 }
+
+const powerBtn = document.getElementById('power-btn')!
+powerBtn.addEventListener('click', () => {
+  if (context.scene.kind === 'off') {
+    context.scene = { kind: 'booting', tick: 0 }
+    powerBtn.classList.add('pressed')
+  }
+})
 
 const KEY_MAP: Record<string, Action> = {
   ArrowUp: 'up',

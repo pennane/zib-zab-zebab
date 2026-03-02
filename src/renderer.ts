@@ -1,4 +1,11 @@
-import type { Cell, CellSurface, EntityKind, EntityVisual, ObstacleKind, Renderer } from './model'
+import type {
+  Cell,
+  CellSurface,
+  EntityKind,
+  EntityVisual,
+  ObstacleKind,
+  Renderer
+} from './model'
 
 async function loadImageBitmap(url: string): Promise<ImageBitmap> {
   const res = await fetch(url)
@@ -14,15 +21,17 @@ async function loadImageBitmapSafe(url: string): Promise<ImageBitmap | null> {
   }
 }
 
-async function loadKioskSlices(url: string): Promise<[ImageBitmap, ImageBitmap, ImageBitmap, ImageBitmap]> {
+async function loadKioskSlices(
+  url: string
+): Promise<[ImageBitmap, ImageBitmap, ImageBitmap, ImageBitmap]> {
   const res = await fetch(url)
   const blob = await res.blob()
-  return await Promise.all([
+  return (await Promise.all([
     createImageBitmap(blob, 0, 16, 16, 16),
     createImageBitmap(blob, 16, 16, 16, 16),
-    createImageBitmap(blob, 32, 16, 16, 16),
-    createImageBitmap(blob, 48, 16, 16, 16)
-  ]) as [ImageBitmap, ImageBitmap, ImageBitmap, ImageBitmap]
+    createImageBitmap(blob, 0, 48, 16, 16),
+    createImageBitmap(blob, 16, 48, 16, 16)
+  ])) as [ImageBitmap, ImageBitmap, ImageBitmap, ImageBitmap]
 }
 
 export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
@@ -33,7 +42,8 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
   const rokc = await loadImageBitmap('rokc.png')
   const box = await loadImageBitmap('box.png')
   const tree = await loadImageBitmapSafe('tree.png')
-  const [kioskF1L, kioskF1R, kioskF2L, kioskF2R] = await loadKioskSlices('zebab-kiosk.png')
+  const [kioskF1L, kioskF1R, kioskF2L, kioskF2R] =
+    await loadKioskSlices('zebab-kiosk.png')
 
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
@@ -46,7 +56,10 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
   ctx.font = '8px pixel'
   ctx.letterSpacing = '0px'
 
-  const surfaceRenderers: Record<CellSurface['kind'], (cell: Cell, x: number, y: number) => void> = {
+  const surfaceRenderers: Record<
+    CellSurface['kind'],
+    (cell: Cell, x: number, y: number) => void
+  > = {
     floor(cell, x, y) {
       const dig = (cell.surface as Extract<CellSurface, { kind: 'floor' }>).dig
       if (dig.kind === 'open') {
@@ -65,11 +78,13 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
       }
     },
     obstacle(cell, x, y) {
-      const kind = (cell.surface as Extract<CellSurface, { kind: 'obstacle' }>).obstacle
+      const kind = (cell.surface as Extract<CellSurface, { kind: 'obstacle' }>)
+        .obstacle
       obstacleRenderers[kind](x * 16, y * 16)
     },
     shield(cell, x, y) {
-      const shield = (cell.surface as Extract<CellSurface, { kind: 'shield' }>).shield
+      const shield = (cell.surface as Extract<CellSurface, { kind: 'shield' }>)
+        .shield
       if (shield.kind === 'closed') {
         ctx.fillStyle = 'blue'
         ctx.fillRect(x * 16, y * 16, 16, 16)
@@ -84,21 +99,40 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
 
   let kioskFrame = 0
 
-  const obstacleRenderers: Record<ObstacleKind, (x: number, y: number) => void> = {
+  const obstacleRenderers: Record<
+    ObstacleKind,
+    (x: number, y: number) => void
+  > = {
     tree(x, y) {
-      if (tree) { ctx.drawImage(tree, x, y) }
-      else { ctx.fillStyle = 'black'; ctx.fillRect(x, y, 16, 16) }
+      if (tree) {
+        ctx.drawImage(tree, x, y)
+      } else {
+        ctx.fillStyle = 'black'
+        ctx.fillRect(x, y, 16, 16)
+      }
     },
-    rock(x, y) { ctx.drawImage(rokc, x, y) },
-    kiosk_left(x, y) { ctx.drawImage(kioskFrame === 0 ? kioskF1L : kioskF2L, x, y) },
-    kiosk_right(x, y) { ctx.drawImage(kioskFrame === 0 ? kioskF1R : kioskF2R, x, y) },
-    box(x, y) { ctx.drawImage(box, x, y) },
+    rock(x, y) {
+      ctx.drawImage(rokc, x, y)
+    },
+    kiosk_left(x, y) {
+      ctx.drawImage(kioskFrame === 0 ? kioskF1L : kioskF2L, x, y)
+    },
+    kiosk_right(x, y) {
+      ctx.drawImage(kioskFrame === 0 ? kioskF1R : kioskF2R, x, y)
+    },
+    box(x, y) {
+      ctx.drawImage(box, x, y)
+    },
     none() {}
   }
 
   const entityRenderers: Record<EntityKind, (entity: EntityVisual) => void> = {
-    alien(entity) { ctx.drawImage(zibzabalien, entity.x, entity.y) },
-    player(entity) { ctx.drawImage(zeff, entity.x, entity.y) }
+    alien(entity) {
+      ctx.drawImage(zibzabalien, entity.x, entity.y)
+    },
+    player(entity) {
+      ctx.drawImage(zeff, entity.x, entity.y)
+    }
   }
 
   return {

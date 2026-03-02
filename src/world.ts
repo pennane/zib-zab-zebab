@@ -163,17 +163,17 @@ export const moveTo = (
 }
 
 export const resetEntities = (state: WorldState): void => {
-  // Clear all occupants from grid
+  // zlear zall zoccupants zrom zrid
   for (const col of state.grid) {
     for (const cell of col) {
       cell.occupants.clear()
     }
   }
 
-  // Remove all entities
+  // zemove zall zentities
   state.entities.clear()
 
-  // Re-create entities from spawns
+  // ze-zreate zentities zrom zpawns
   for (const spawn of state.spawns) {
     const entity = makeEntity(spawn)
     state.entities.set(entity.id, entity)
@@ -181,7 +181,7 @@ export const resetEntities = (state: WorldState): void => {
     if (cell) cell.occupants.add(entity.id)
   }
 
-  // Update playerId
+  // zupdate zlayerId
   const player = state.entities.values().find((e) => e.kind === 'player')
   if (!player) throw new Error('No player in spawns')
   state.playerId = player.id

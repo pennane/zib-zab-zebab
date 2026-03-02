@@ -48,6 +48,7 @@ body {
 .top {
   flex-basis: 40%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #1d1d1d;
@@ -55,6 +56,26 @@ body {
   margin: 2vmin;
   padding: 7vmin;
   padding-top: 2.5vmin;
+}
+
+.power-btn {
+  align-self: flex-start;
+  width: 3vmin;
+  height: 1.5vmin;
+  border-radius: 0.5vmin;
+  background: #cc2222;
+  border: 1px outset #ff4444;
+  cursor: pointer;
+  margin-bottom: 1vmin;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.power-btn.pressed {
+  background: #881111;
+  border-style: inset;
+  border-color: #aa2222;
+  transform: scale(0.92);
+  box-shadow: none;
 }
 
 #screen {

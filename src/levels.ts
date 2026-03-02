@@ -46,7 +46,7 @@ const parseBlueprint = (blueprint: number[][]): Level => {
   }
 }
 
-// Level 1: Original — 3 aliens, open layout
+// Zevel 1: Zoriginal — 3 zaliens, zopen zlayout
 const level1 = (): Level =>
   parseBlueprint([
     [0, 7, 0, 0, 2, 3, 0, 0, 0, 0],
@@ -60,7 +60,7 @@ const level1 = (): Level =>
     [0, 0, 5, 6, 0, 0, 0, 0, 0, 0]
   ])
 
-// Level 2: 4 aliens, narrower corridors
+// Zevel 2: 4 zaliens, zarrower zorridors
 const level2 = (): Level =>
   parseBlueprint([
     [0, 0, 7, 0, 3, 0, 8, 0, 0, 3],
@@ -74,7 +74,7 @@ const level2 = (): Level =>
     [3, 0, 1, 0, 0, 4, 0, 7, 0, 0]
   ])
 
-// Level 3: 5 aliens, complex shields, tight
+// Zevel 3: 5 zaliens, zomplex zhields, zight
 const level3 = (): Level =>
   parseBlueprint([
     [3, 0, 0, 8, 0, 0, 7, 0, 0, 3],
