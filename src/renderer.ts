@@ -42,8 +42,12 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
   const rokc = await loadImageBitmap('rokc.png')
   const box = await loadImageBitmap('box.png')
   const tree = await loadImageBitmapSafe('tree.png')
+  const zebab = await loadImageBitmap('zebab.png')
   const [kioskF1L, kioskF1R, kioskF2L, kioskF2R] =
     await loadKioskSlices('zebab-kiosk.png')
+  const shieldSheet = await loadImageBitmap('shield.png')
+  const shieldClosed = await createImageBitmap(shieldSheet, 0, 0, 16, 16)
+  const shieldOpen = await createImageBitmap(shieldSheet, 0, 16, 16, 16)
 
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
@@ -63,17 +67,14 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
     floor(cell, x, y) {
       const platter = (cell.surface as Extract<CellSurface, { kind: 'floor' }>).platter
       if (platter.kind === 'open') {
-        ctx.fillStyle = '#331100'
-        ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12)
+        ctx.drawImage(zebab, x * 16, y * 16)
       } else if (platter.kind === 'plattering') {
         ctx.globalAlpha = platter.progress
-        ctx.fillStyle = '#331100'
-        ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12)
+        ctx.drawImage(zebab, x * 16, y * 16)
         ctx.globalAlpha = 1
       } else if (platter.kind === 'napping' || platter.kind === 'closing') {
         ctx.globalAlpha = 1 - platter.progress
-        ctx.fillStyle = '#331100'
-        ctx.fillRect(x * 16 + 2, y * 16 + 2, 12, 12)
+        ctx.drawImage(zebab, x * 16, y * 16)
         ctx.globalAlpha = 1
       }
     },
@@ -86,13 +87,9 @@ export const makeRenderer = async (target: HTMLElement): Promise<Renderer> => {
       const shield = (cell.surface as Extract<CellSurface, { kind: 'shield' }>)
         .shield
       if (shield.kind === 'closed') {
-        ctx.fillStyle = 'blue'
-        ctx.fillRect(x * 16, y * 16, 16, 16)
+        ctx.drawImage(shieldClosed, x * 16, y * 16)
       } else {
-        ctx.globalAlpha = 0.3
-        ctx.fillStyle = 'blue'
-        ctx.fillRect(x * 16, y * 16, 16, 16)
-        ctx.globalAlpha = 1
+        ctx.drawImage(shieldOpen, x * 16, y * 16)
       }
     }
   }

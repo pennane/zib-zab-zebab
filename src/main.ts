@@ -24,6 +24,9 @@ powerBtn.addEventListener('click', () => {
   if (context.scene.kind === 'off') {
     context.scene = { kind: 'booting', tick: 0 }
     powerBtn.classList.add('pressed')
+  } else {
+    context.scene = { kind: 'off' }
+    powerBtn.classList.remove('pressed')
   }
 })
 

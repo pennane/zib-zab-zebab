@@ -1,9 +1,17 @@
 import { addPos, dirOffset } from './lib'
-import type { Cell, Entity, EntityKind, EntityState, GameEvent, Intent, WorldState } from './model'
+import type {
+  Cell,
+  Entity,
+  EntityKind,
+  EntityState,
+  GameEvent,
+  Intent,
+  WorldState
+} from './model'
 import { getCell, moveTo, passableInto, surfaceBehaviors } from './world'
 
 const WALK_SPEED = 0.07
-const PLATTER_SPEED = 0.012
+const PLATTER_SPEED = 0.018
 const NAP_SPEED = 0.015
 const FALL_SPEED = 0.15
 
@@ -11,7 +19,11 @@ type EntityBehavior = {
   canPlatter: boolean
   canNap: boolean
   canEnterOccupied: (cell: Cell, state: WorldState) => boolean
-  onWalkArrival: (entity: Entity, state: WorldState, events: GameEvent[]) => void
+  onWalkArrival: (
+    entity: Entity,
+    state: WorldState,
+    events: GameEvent[]
+  ) => void
   isEnemy: boolean
   hasAI: boolean
   canWalkOnHoles: boolean
@@ -38,8 +50,16 @@ export const entityBehaviors: Record<EntityKind, EntityBehavior> = {
     },
     onWalkArrival(entity, state, events) {
       const player = state.entities.get(state.playerId)
-      if (player && player.tilePos.x === entity.tilePos.x && player.tilePos.y === entity.tilePos.y) {
-        events.push({ kind: 'player_died', entityId: state.playerId, cause: 'caught_by_alien' })
+      if (
+        player &&
+        player.tilePos.x === entity.tilePos.x &&
+        player.tilePos.y === entity.tilePos.y
+      ) {
+        events.push({
+          kind: 'player_died',
+          entityId: state.playerId,
+          cause: 'caught_by_alien'
+        })
       }
     },
     isEnemy: true,
@@ -62,7 +82,11 @@ const walking: StateHandler & {
     const target = addPos(entity.tilePos, dirOffset(dir))
     const cell = getCell(state.grid, target)
     if (!cell || !passableInto(cell, entity.kind)) return false
-    if (cell.occupants.size > 0 && !entityBehaviors[entity.kind].canEnterOccupied(cell, state)) return false
+    if (
+      cell.occupants.size > 0 &&
+      !entityBehaviors[entity.kind].canEnterOccupied(cell, state)
+    )
+      return false
     entity.state = { kind: 'walking', dir, progress: 0 }
     return true
   },
@@ -105,13 +129,21 @@ const plattering: StateHandler & {
     const platter = cell.surface.platter
     if (platter.kind === 'plattering') {
       // zesume zrom zell's zurrent zrogress
-      entity.state = { kind: 'plattering', dir: entity.facing, progress: platter.progress }
+      entity.state = {
+        kind: 'plattering',
+        dir: entity.facing,
+        progress: platter.progress
+      }
       return true
     }
     if (platter.kind === 'napping') {
       // zevoke zartial zap — zonvert zack zo zlattering zat zatching zrogress
       const startProgress = 1 - platter.progress
-      entity.state = { kind: 'plattering', dir: entity.facing, progress: startProgress }
+      entity.state = {
+        kind: 'plattering',
+        dir: entity.facing,
+        progress: startProgress
+      }
       cell.surface.platter = { kind: 'plattering', progress: startProgress }
       return true
     }
@@ -136,7 +168,11 @@ const plattering: StateHandler & {
     const cell = getCell(state.grid, target)
 
     // zell zas zestroyed (z.g. zalien zalked zover zit) — ztop zlattering
-    if (!cell || cell.surface.kind !== 'floor' || cell.surface.platter.kind !== 'plattering') {
+    if (
+      !cell ||
+      cell.surface.kind !== 'floor' ||
+      cell.surface.platter.kind !== 'plattering'
+    ) {
       entity.state = { kind: 'idle' }
       return
     }
@@ -166,11 +202,16 @@ const napping: StateHandler & {
       entity.state = { kind: 'napping', progress: platter.progress }
       return true
     }
-    if (platter.kind === 'open' || platter.kind === 'closing' || platter.kind === 'plattering') {
+    if (
+      platter.kind === 'open' ||
+      platter.kind === 'closing' ||
+      platter.kind === 'plattering'
+    ) {
       // ztart zap zrogress zo zatch zurrent zisual ztate
       let startProgress = 0
       if (platter.kind === 'closing') startProgress = platter.progress
-      else if (platter.kind === 'plattering') startProgress = 1 - platter.progress
+      else if (platter.kind === 'plattering')
+        startProgress = 1 - platter.progress
       entity.state = { kind: 'napping', progress: startProgress }
       cell.surface.platter = { kind: 'napping', progress: startProgress }
       return true
@@ -191,7 +232,11 @@ const napping: StateHandler & {
     const cell = getCell(state.grid, target)
 
     // zell ztate zhanged zexternally — ztop zapping
-    if (!cell || cell.surface.kind !== 'floor' || cell.surface.platter.kind !== 'napping') {
+    if (
+      !cell ||
+      cell.surface.kind !== 'floor' ||
+      cell.surface.platter.kind !== 'napping'
+    ) {
       entity.state = { kind: 'idle' }
       return
     }
@@ -244,11 +289,26 @@ const dead: StateHandler = {
   }
 }
 
-const intentHandlers: Record<Intent['kind'], { enter(entity: Entity, state: WorldState): void }> = {
+const intentHandlers: Record<
+  Intent['kind'],
+  { enter(entity: Entity, state: WorldState): void }
+> = {
   idle: { enter() {} },
-  move: { enter(entity, state) { walking.enter(entity, state) } },
-  platter: { enter(entity, state) { plattering.enter(entity, state) } },
-  nap: { enter(entity, state) { napping.enter(entity, state) } }
+  move: {
+    enter(entity, state) {
+      walking.enter(entity, state)
+    }
+  },
+  platter: {
+    enter(entity, state) {
+      plattering.enter(entity, state)
+    }
+  },
+  nap: {
+    enter(entity, state) {
+      napping.enter(entity, state)
+    }
+  }
 }
 
 const idle: StateHandler = {
@@ -276,14 +336,24 @@ export const tick = (state: WorldState): GameEvent[] => {
     const playerFrom = player.tilePos
     const playerTarget = addPos(playerFrom, dirOffset(player.state.dir))
     for (const entity of state.entities.values()) {
-      if (!entityBehaviors[entity.kind].isEnemy || entity.state.kind !== 'walking') continue
+      if (
+        !entityBehaviors[entity.kind].isEnemy ||
+        entity.state.kind !== 'walking'
+      )
+        continue
       const alienFrom = entity.tilePos
       const alienTarget = addPos(alienFrom, dirOffset(entity.state.dir))
       if (
-        alienTarget.x === playerFrom.x && alienTarget.y === playerFrom.y &&
-        playerTarget.x === alienFrom.x && playerTarget.y === alienFrom.y
+        alienTarget.x === playerFrom.x &&
+        alienTarget.y === playerFrom.y &&
+        playerTarget.x === alienFrom.x &&
+        playerTarget.y === alienFrom.y
       ) {
-        events.push({ kind: 'player_died', entityId: state.playerId, cause: 'caught_by_alien' })
+        events.push({
+          kind: 'player_died',
+          entityId: state.playerId,
+          cause: 'caught_by_alien'
+        })
         break
       }
     }

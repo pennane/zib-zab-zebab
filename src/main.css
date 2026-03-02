@@ -4,6 +4,7 @@
 }
 
 :root {
+  font-family: pixel;
   color-scheme: dark;
 }
 
@@ -30,11 +31,18 @@ body {
 }
 
 .handheld {
+  position: relative;
   height: min(90vmin); /* ← width-only anchor, height follows */
   display: flex;
   flex-direction: column;
   border-radius: 1vmin 1vmin 2.5vmin 2.5vmin;
   background-color: #0f0;
+  background: linear-gradient(
+    120deg,
+    rgb(0 193 0) 0%,
+    rgb(62 182 62) 20%,
+    rgb(29 166 29) 100%
+  );
   aspect-ratio: 3 / 5;
 
   border: ridge #0f0;
@@ -115,8 +123,10 @@ body {
   background: #2e2e2e;
   border-radius: 3px;
   cursor: pointer;
-  border: ridge #5a5a5a;
-  color: black;
+  border: 1px solid #5a5a5a;
+  border-bottom-color: #1a1a1a;
+  border-right-color: #1a1a1a;
+  color: #999;
   font-family: monospace;
   text-align: center;
   line-height: 1;
@@ -124,6 +134,17 @@ body {
   font-size: 2.5vmin;
   touch-action: none;
   user-select: none;
+  transition:
+    transform 0.06s,
+    background 0.06s,
+    box-shadow 0.06s;
+  box-shadow: 0 2px 0 #111;
+}
+
+.dpad button:active {
+  transform: translateY(1px);
+  background: #222;
+  box-shadow: 0 0 0 #111;
 }
 
 .dpad > div {
@@ -144,12 +165,25 @@ body {
   background: #2e2e2e;
   border-radius: 100%;
   cursor: pointer;
-  border: ridge #5a5a5a;
-  color: black;
+  border: 1px solid #5a5a5a;
+  border-bottom-color: #1a1a1a;
+  border-right-color: #1a1a1a;
+  color: #999;
   font-weight: 700;
   font-size: 3vmin;
   touch-action: none;
   user-select: none;
+  transition:
+    transform 0.06s,
+    background 0.06s,
+    box-shadow 0.06s;
+  box-shadow: 0 2px 0 #111;
+}
+
+.ab button:active {
+  transform: translateY(1px);
+  background: #222;
+  box-shadow: 0 0 0 #111;
 }
 
 .ab button:first-of-type {
@@ -172,9 +206,22 @@ body {
   width: 7vmin;
   height: 3vmin;
   background: #2e2e2e;
-  border-radius: 3px;
+  border-radius: 10px;
   cursor: pointer;
-  border: ridge #5a5a5a;
+  border: 1px solid #5a5a5a;
+  border-bottom-color: #1a1a1a;
+  border-right-color: #1a1a1a;
   color: black;
   font-size: 1.5vmin;
+  transition:
+    transform 0.06s,
+    background 0.06s,
+    box-shadow 0.06s;
+  box-shadow: 0 2px 0 #111;
+}
+
+.startselect button:active {
+  transform: translateY(1px);
+  background: #222;
+  box-shadow: 0 0 0 #111;
 }

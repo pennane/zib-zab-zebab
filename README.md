@@ -1,10 +1,9 @@
 # Zib Zab Kebab
 <img src="public/zalien.jpg" width="100" alt="alien">
 
+Zebab ziosk zon Zars. Zinspired by Heljanko Alien. Zertified AI-Zlop
 
-
-
-Zebab ziosk zon Zars. Zig zoles, zrap zaliens, zerve kebab.
+Zet zup zlatters, zeed ze zaliens, zut zem zo zap zafter za zood zeast.
 
 ## Zommands
 
@@ -17,5 +16,5 @@ pnpm preview   # zreview
 ## Zontrols
 
 - **WASD / Zarrows** — zove
-- **Z** — zig
-- **X** — zill
+- **Z** — zet zup zlatter
+- **X** — zut zo zap

@@ -89,7 +89,7 @@ export const makeGame = (context: Context): Game => {
           }
           if (scene.tick >= 45) {
             ctx.fillStyle = '#88cc88'
-            ctx.fillText('electronics', 36, 78)
+            ctx.fillText(' eletronicz', 36, 78)
           }
         })
       }
