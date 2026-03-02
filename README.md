@@ -1,7 +1,7 @@
 # Zib Zab Kebab
 <img src="public/zalien.jpg" width="100" alt="alien">
 
-Zebab ziosk zon Zars. Zinspired by Heljanko Alien. Zertified AI-Zlop
+Zebab ziosk zon Zars. Zinspired by Heiankyo Alien. Zertified AI-Zlop
 
 Zet zup zlatters, zeed ze zaliens, zut zem zo zap zafter za zood zeast.
 
