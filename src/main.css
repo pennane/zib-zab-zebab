@@ -14,9 +14,6 @@ body {
   height: 100%;
 
   background: radial-gradient(#1c281c, #000);
-
-  touch-action: none;
-  user-select: none;
 }
 
 * {
@@ -32,6 +29,11 @@ body {
   justify-content: center;
   padding: 5vmin;
   box-sizing: border-box;
+}
+h1 {
+  touch-action: none;
+  user-select: none;
+  text-align: center;
 }
 
 .handheld {
@@ -55,6 +57,9 @@ body {
     0 4px 10px -3px rgba(255, 255, 255, 0.1),
     0 2px 4px -2px rgba(255, 255, 255, 0.1);
   box-sizing: border-box;
+
+  touch-action: none;
+  user-select: none;
 }
 
 .top {
@@ -160,14 +165,21 @@ body {
   border-radius: 3px;
 }
 
+.dpad > button:first-child {
+  margin-bottom: -2px;
+}
+.dpad > button:last-child {
+  margin-top: -2px;
+}
+
 .ab {
   display: flex;
   gap: 1.5vmin;
 }
 
 .ab button {
-  width: 6vmin;
-  height: 6vmin;
+  width: 6.5vmin;
+  height: 6.5vmin;
   background: #2e2e2e;
   border-radius: 100%;
   cursor: pointer;
@@ -228,4 +240,10 @@ body {
   transform: translateY(1px);
   background: #222;
   box-shadow: 0 0 0 #111;
+}
+
+@media (max-width: 550px) {
+  .handheld {
+    transform: scale(1.6);
+  }
 }
